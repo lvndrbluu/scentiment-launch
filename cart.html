@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scentiment | Cart</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Playfair Display', serif; }
+body { background:#f5f1e6; color:#3a3a3a; text-align:center; }
+nav { background:#dddbcf; display:flex; justify-content:space-between; align-items:center; padding:18px 40px; position:fixed; width:100%; top:0; left:0; z-index:1000; }
+.logo { font-size:1.4rem; font-weight:bold; color:#ff8b42; letter-spacing:2px; }
+.links { display:flex; gap:25px; }
+nav a{text-decoration:none; font-weight:bold; color:#3a3a3a; }
+nav a:hover{color:#ff6b1a;}
+nav a.active{color:#ff6b1a;}
+.menu-toggle{display:none; font-size:1.8rem; cursor:pointer; color:#3a3a3a;}
+h1{margin:130px 0 20px;}
+.container{padding:30px; max-width:800px; margin:auto;}
+.cart-item{background:#ede6d8; padding:15px 20px; border-radius:12px; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 6px 15px rgba(0,0,0,0.2);}
+button{background:#ff8b42; border:none; padding:8px 16px; color:white; border-radius:6px; cursor:pointer; font-family:'Playfair Display', serif;}
+button:hover{background:#ff6b1a;}
+#total{margin-top:20px; font-weight:bold;}
+button.checkout{width:20%; margin-top:20px; padding:12px; font-size:1rem; border-radius:8px;}
+footer{text-align:center; padding:20px; margin-top:40px; font-size:0.9rem; color:#3a3a3a;}
+footer hr{border:0; border-top:1px solid #3a3a3a; margin-bottom:10px;}
+
+@media(max-width:768px){
+.menu-toggle{display:block;}
+.links{position:fixed; top:70px; right:0; background:#dddbcf; flex-direction:column; width:220px; text-align:center; padding:20px 0; display:none; box-shadow:-5px 5px 15px rgba(0,0,0,0.2);}
+.links a{padding:15px 0; width:100%;}
+.links.active{display:flex;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+<div class="logo">SCENTIMENT</div>
+<div class="menu-toggle" onclick="toggleMenu()">☰</div>
+<div class="links" id="navLinks">
+<a href="home.html">Home</a>
+<a href="products.html">Products</a>
+<a href="aboutus.html">About</a>
+<a href="contact.html">Contact</a>
+<a href="cart.html" class="active">Cart</a>
+</div>
+</nav>
+
+<h1>Your Cart</h1>
+
+<div class="container" id="cartContainer"></div>
+<p id="total"></p>
+<button class="checkout" onclick="checkout()">Checkout</button>
+
+<footer>
+<hr>
+© 2026 Scentiment. All Rights Reserved.
+</footer>
+
+<script>
+function toggleMenu(){document.getElementById("navLinks").classList.toggle("active");}
+
+const prices = {
+  "Lavender":120,"Rose":140,"Lemon":130,"Grapefruit":135,"Ylang-Ylang":145,
+  "Citronella":150,"Orange":120,"Vanilla":130,"Jasmine":140,"Sandalwood":150,
+  "Relaxation Bundle":350,"Summer Citrus Bundle":400,"Mood Lifter Bundle":450,"Citronella Duo":280
+};
+
+function renderCart(){
+  const container=document.getElementById('cartContainer');
+  container.innerHTML='';
+  let cart=JSON.parse(localStorage.getItem('cart'))||[];
+  let total=0;
+  cart.forEach((item,index)=>{
+    total+=prices[item]||0;
+    const div=document.createElement('div');
+    div.className='cart-item';
+    div.innerHTML=`<span>${item} - ₱${prices[item]}</span><button onclick="removeItem(${index})">Remove</button>`;
+    container.appendChild(div);
+  });
+  document.getElementById('total').innerText='Total: ₱'+total;
+}
+
+function removeItem(index){
+  let cart=JSON.parse(localStorage.getItem('cart'))||[];
+  cart.splice(index,1);
+  localStorage.setItem('cart',JSON.stringify(cart));
+  renderCart();
+}
+
+function checkout(){
+  let cart=JSON.parse(localStorage.getItem('cart'))||[];
+  if(cart.length>0){
+    localStorage.removeItem('cart');
+    renderCart();
+    document.getElementById('total').innerText="Thank you for your purchase! 🎉";
+  }
+}
+
+renderCart();
+</script>
+
+</body>
+</html>
